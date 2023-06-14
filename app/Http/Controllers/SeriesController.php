@@ -37,14 +37,15 @@ class SeriesController extends Controller
         $serie = $this->repository->add($request);
 
         $userList = User::all();
-        foreach ($userList as $user) {
+        foreach ($userList as $index => $user) {
             $email = new SeriesCreated(
                 $serie->nome,
                 $serie->id,
                 $request->seasonsQty,
                 $request->episodesPerSeason,
             );
-            Mail::to($user)->queue($email);
+            $when = now()->addSeconds($index * 2);
+            Mail::to($user)->later($when, $email);
         }
 
         return to_route('series.index')
