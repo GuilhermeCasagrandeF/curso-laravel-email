@@ -43,7 +43,8 @@ Route::post('/login', function (Request $request){
         return response()->json('Unauthorized', 401);
     }
     $user = Auth::user();
-    $token = $user->createToken('token');
+    $user->tokens()->delete();
+    $token = $user->createToken('token', ['series:delete']);
 
     return response()->json($token->plainTextToken);
 });
